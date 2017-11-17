@@ -28,6 +28,10 @@ import java.util.Properties;
 import java.util.Set;
 import org.junit.Test;
 
+import co.touchlab.doppl.testing.DopplHacks;
+import co.touchlab.doppl.utils.PlatformUtils;
+
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;

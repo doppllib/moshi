@@ -204,18 +204,25 @@ public final class LinkedHashTreeMapTest {
     oldTable[0] = node(node(node("a"), "b", node("c")), "d", node(node("e"), "f", node("g")));
 
     Node<String, String>[] newTable = LinkedHashTreeMap.doubleCapacity(oldTable);
-    assertTree("(b d f)", newTable[0]); // Even hash codes!
-    assertTree("(a c (. e g))", newTable[1]); // Odd hash codes!
+
+    boolean j2objc = Types.isJ2objc();
+
+    assertTree("(b d f)", newTable[j2objc ? 1 :0]); // Even hash codes!
+    assertTree("(a c (. e g))", newTable[j2objc ? 0 : 1]); // Odd hash codes!
   }
 
   @Test public void doubleCapacityAllNodesOnLeft() {
     @SuppressWarnings("unchecked") // Arrays and generics don't get along.
-        Node<String, String>[] oldTable = new Node[1];
+            Node<String, String>[] oldTable = new Node[1];
     oldTable[0] = node(node("b"), "d", node("f"));
 
+    int dataIndex = Types.isJ2objc() ? 1 : 0;
+    int nullIndex = Types.isJ2objc() ? 0 : 1;
+
     Node<String, String>[] newTable = LinkedHashTreeMap.doubleCapacity(oldTable);
-    assertTree("(b d f)", newTable[0]); // Even hash codes!
-    assertThat(newTable[1]).isNull();
+    String asdfString = toString(newTable[dataIndex]);
+    assertTree("(b d f)", newTable[dataIndex]); // Even hash codes!
+    assertThat(newTable[nullIndex]).isNull();
 
     for (Node<?, ?> node : newTable) {
       if (node != null) {
@@ -265,7 +272,8 @@ public final class LinkedHashTreeMapTest {
     if (node.parent != null) {
       assertThat(node.parent.left == node || node.parent.right == node).isTrue();
     }
-    if (Math.max(leftHeight, rightHeight) + 1 != node.height) {
+    int nodeHeight = node.height;
+    if (Math.max(leftHeight, rightHeight) + 1 != nodeHeight) {
       fail();
     }
   }

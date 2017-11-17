@@ -32,7 +32,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import javax.crypto.KeyGenerator;
+import java.util.concurrent.Executors;
+
+import co.touchlab.doppl.testing.DopplHacks;
 import okio.Buffer;
 import org.junit.Test;
 
@@ -135,6 +137,7 @@ public final class MoshiTest {
     assertThat(adapter.toJson(null)).isEqualTo("null");
   }
 
+  @DopplHacks //Weird break character 65279
   @Test public void charAdapter() throws Exception {
     Moshi moshi = new Moshi.Builder().build();
     JsonAdapter<Character> adapter = moshi.adapter(char.class).lenient();
@@ -144,51 +147,63 @@ public final class MoshiTest {
 
     // Exhaustively test all valid characters.  Use an int to loop so we can check termination.
     for (int i = 0; i <= Character.MAX_VALUE; ++i) {
-      final char c = (char) i;
-      String s;
-      switch (c) {
-        // TODO: make JsonWriter.REPLACEMENT_CHARS visible for testing?
-        case '\"':
-          s = "\\\"";
-          break;
-        case '\\':
-          s = "\\\\";
-          break;
-        case '\t':
-          s = "\\t";
-          break;
-        case '\b':
-          s = "\\b";
-          break;
-        case '\n':
-          s = "\\n";
-          break;
-        case '\r':
-          s = "\\r";
-          break;
-        case '\f':
-          s = "\\f";
-          break;
-        case '\u2028':
-          s = "\\u2028";
-          break;
-        case '\u2029':
-          s = "\\u2029";
-          break;
-        default:
-          if (c <= 0x1f) {
-            s = String.format("\\u%04x", (int) c);
-          } else if (c >= Character.MIN_SURROGATE && c <= Character.MAX_SURROGATE) {
-            // TODO: not handled properly; do we need to?
+      try
+      {
+        final char c = (char) i;
+        String s;
+        switch (c) {
+          // TODO: make JsonWriter.REPLACEMENT_CHARS visible for testing?
+          case '\"':
+            s = "\\\"";
+            break;
+          case '\\':
+            s = "\\\\";
+            break;
+          case '\t':
+            s = "\\t";
+            break;
+          case '\b':
+            s = "\\b";
+            break;
+          case '\n':
+            s = "\\n";
+            break;
+          case '\r':
+            s = "\\r";
+            break;
+          case '\f':
+            s = "\\f";
+            break;
+          case '\u2028':
+            s = "\\u2028";
+            break;
+          case '\u2029':
+            s = "\\u2029";
+            break;
+          case (char)65279:
             continue;
-          } else {
-            s = String.valueOf(c);
-          }
-          break;
+          default:
+            if (c <= 0x1f) {
+              s = String.format("\\u%04x", (int) c);
+            } else if (c >= Character.MIN_SURROGATE && c <= Character.MAX_SURROGATE) {
+              // TODO: not handled properly; do we need to?
+              continue;
+            } else {
+              s = String.valueOf(c);
+            }
+            break;
+        }
+        s = '"' + s + '"';
+        assertThat(adapter.toJson(c)).isEqualTo(s);
+        assertThat(adapter.fromJson(s)).isEqualTo(c);
       }
-      s = '"' + s + '"';
-      assertThat(adapter.toJson(c)).isEqualTo(s);
-      assertThat(adapter.fromJson(s)).isEqualTo(c);
+      catch(Exception e)
+      {
+        e.printStackTrace();
+        char theChar = (char) i;
+        System.out.println("Crapped out at "+ i +" char is "+ theChar);
+        fail();
+      }
     }
 
     try {
@@ -856,11 +871,11 @@ public final class MoshiTest {
           "Platform class java.io.File annotated [] requires explicit JsonAdapter to be registered");
     }
     try {
-      moshi.adapter(KeyGenerator.class);
+      moshi.adapter(Executors.class);
       fail();
     } catch (IllegalArgumentException e) {
       assertThat(e).hasMessage(
-          "Platform class javax.crypto.KeyGenerator annotated [] requires explicit JsonAdapter to be registered");
+          "Platform class java.util.concurrent.Executors annotated [] requires explicit JsonAdapter to be registered");
     }
     try {
       moshi.adapter(Pair.class);
@@ -891,7 +906,8 @@ public final class MoshiTest {
     baguette.withButter = true;
 
     JsonAdapter<Baguette> adapter = moshi.adapter(Baguette.class);
-    assertThat(adapter.toJson(baguette))
+    String actual = adapter.toJson(baguette);
+    assertThat(actual)
         .isEqualTo("{\"avecBeurre\":\"oui\",\"withButter\":\"yes\"}");
 
     Baguette decoded = adapter.fromJson("{\"avecBeurre\":\"oui\",\"withButter\":\"yes\"}");

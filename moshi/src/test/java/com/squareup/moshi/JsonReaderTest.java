@@ -33,6 +33,7 @@ import static com.squareup.moshi.JsonReader.Token.STRING;
 import static com.squareup.moshi.TestUtil.repeat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
@@ -531,7 +532,9 @@ public final class JsonReaderTest {
     assertThat(reader2.peek()).isEqualTo(JsonReader.Token.END_DOCUMENT);
 
     JsonReader reader3 = newReader("null");
-    assertThat(reader3.nextNull()).isNull();
+    Object o = reader3.nextNull();
+    assertNull(o);
+    //    assertThat(reader3.nextNull()).isNull();
     assertThat(reader3.peek()).isEqualTo(JsonReader.Token.END_DOCUMENT);
 
     JsonReader reader4 = newReader("123");

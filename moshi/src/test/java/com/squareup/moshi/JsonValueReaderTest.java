@@ -26,6 +26,7 @@ import org.junit.Test;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public final class JsonValueReaderTest {
@@ -55,7 +56,8 @@ public final class JsonValueReaderTest {
 
     assertThat(reader.hasNext()).isTrue();
     assertThat(reader.peek()).isEqualTo(JsonReader.Token.NULL);
-    assertThat(reader.nextNull()).isNull();
+    assertNull(reader.nextNull());
+//    assertThat(reader.nextNull()).isNull();
 
     assertThat(reader.hasNext()).isFalse();
     assertThat(reader.peek()).isEqualTo(JsonReader.Token.END_ARRAY);
@@ -98,7 +100,8 @@ public final class JsonValueReaderTest {
     assertThat(reader.peek()).isEqualTo(JsonReader.Token.NAME);
     assertThat(reader.nextName()).isEqualTo("d");
     assertThat(reader.peek()).isEqualTo(JsonReader.Token.NULL);
-    assertThat(reader.nextNull()).isNull();
+    assertNull(reader.nextNull());
+//    assertThat(reader.nextNull()).isNull();
 
     assertThat(reader.hasNext()).isFalse();
     assertThat(reader.peek()).isEqualTo(JsonReader.Token.END_OBJECT);

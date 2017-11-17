@@ -56,11 +56,12 @@ final class ClassJsonAdapter<T> extends JsonAdapter<T> {
       }
       if (!annotations.isEmpty()) return null;
 
-      if (rawType.getEnclosingClass() != null && !Modifier.isStatic(rawType.getModifiers())) {
+      //J2objc makes anon inner classes static: https://github.com/doppllib/j2objc/issues/1
+      if (rawType.getEnclosingClass() != null) {
         if (rawType.getSimpleName().isEmpty()) {
           throw new IllegalArgumentException(
               "Cannot serialize anonymous class " + rawType.getName());
-        } else {
+        } else if(!Modifier.isStatic(rawType.getModifiers())) {
           throw new IllegalArgumentException(
               "Cannot serialize non-static nested class " + rawType.getName());
         }

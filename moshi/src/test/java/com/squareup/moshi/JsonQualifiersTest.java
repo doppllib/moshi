@@ -16,9 +16,21 @@
 package com.squareup.moshi;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Assert;
 import org.junit.Test;
+
+
+import co.touchlab.doppl.testing.DopplHacks;
+
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +73,9 @@ public final class JsonQualifiersTest {
     StringAndFooString v1 = new StringAndFooString();
     v1.a = "aa";
     v1.b = "bar";
-    assertThat(adapter.toJson(v1)).isEqualTo("{\"a\":\"aa\",\"b\":\"foobar\"}");
+    String actual = adapter.toJson(v1);
+    System.out.println(actual);
+    assertThat(actual).isEqualTo("{\"a\":\"aa\",\"b\":\"foobar\"}");
 
     StringAndFooString v2 = adapter.fromJson("{\"a\":\"aa\",\"b\":\"foobar\"}");
     assertThat(v2.a).isEqualTo("aa");
@@ -96,11 +110,69 @@ public final class JsonQualifiersTest {
   static class StringAndFooString {
     String a;
     @FooPrefix String b;
+
+    @Override
+    public boolean equals(Object o)
+    {
+      System.out.println("ASDF");
+      return o instanceof StringAndFooString;
+    }
   }
 
   static class StringAndFooBazString {
     String a;
     @FooPrefix @BazSuffix String b;
+  }
+
+  @Retention(RUNTIME)
+  public @interface QwertAnnot {
+  }
+
+  static class Asdf
+  {
+    String a;
+
+    @QwertAnnot
+    String b;
+  }
+
+  @Test
+  public void annotationEqualsTest()
+  {
+    Field field = Asdf.class.getDeclaredFields()[1];
+    Annotation a = field.getAnnotations()[0];
+    Annotation b = field.getAnnotations()[0];
+
+    Assert.assertEquals(a, a);
+    Assert.assertEquals(a, b);
+
+    Set<Annotation> aSet = new HashSet<>();
+    Set<Annotation> bSet = new HashSet<>();
+
+    aSet.add(a);
+    bSet.add(b);
+
+    boolean setsEqual = aSet.equals(bSet);
+    Assert.assertEquals(aSet, bSet);
+    /*
+    Annotation[] annotations = field.getAnnotations();//StringAndFooString.class.getAnnotations();
+    Set<Annotation> aSet = new HashSet<>(annotations.length);
+    Set<Annotation> bSet = new HashSet<>(annotations.length);
+
+    for(Annotation annotation : annotations)
+    {
+      aSet.add(annotation);
+    }
+
+    StringAndFooString stringAndFooString = new StringAndFooString();
+
+    for(Annotation annotation : stringAndFooString.getClass().getDeclaredFields()[1].getAnnotations())
+    {
+      bSet.add(annotation);
+    }
+
+    Assert.assertEquals(aSet, bSet);
+    Assert.assertTrue(aSet.equals(bSet));*/
   }
 
   @Test public void builtInTypesWithMultipleAnnotations() throws Exception {

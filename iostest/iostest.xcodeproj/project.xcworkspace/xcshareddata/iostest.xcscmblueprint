@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "F8126AA5B1E6A06FE58BA71781290E1F5DD70CDD",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "F8126AA5B1E6A06FE58BA71781290E1F5DD70CDD" : 9223372036854775807,
+    "44D221F7591175A4A445187FEA95357B21A925E5" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "485B9BE3-64BC-441D-94BE-B3DE2FF5D2BD",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "F8126AA5B1E6A06FE58BA71781290E1F5DD70CDD" : "moshi\/",
+    "44D221F7591175A4A445187FEA95357B21A925E5" : "..\/devel\/j2objc"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "iostest",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "iostest\/iostest.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:google\/j2objc.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "44D221F7591175A4A445187FEA95357B21A925E5"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/doppllib\/moshi.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F8126AA5B1E6A06FE58BA71781290E1F5DD70CDD"
+    }
+  ]
+}
