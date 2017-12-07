@@ -21,11 +21,15 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -41,6 +45,8 @@ import org.junit.Test;
 import static com.squareup.moshi.TestUtil.newReader;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public final class MoshiTest {
@@ -906,8 +912,7 @@ public final class MoshiTest {
     baguette.withButter = true;
 
     JsonAdapter<Baguette> adapter = moshi.adapter(Baguette.class);
-    String actual = adapter.toJson(baguette);
-    assertThat(actual)
+    assertThat(adapter.toJson(baguette))
         .isEqualTo("{\"avecBeurre\":\"oui\",\"withButter\":\"yes\"}");
 
     Baguette decoded = adapter.fromJson("{\"avecBeurre\":\"oui\",\"withButter\":\"yes\"}");
@@ -1138,6 +1143,57 @@ public final class MoshiTest {
         }
       };
     }
+  }
+
+  interface ShowMe
+  {
+    int helloInt();
+  }
+
+  @Test
+  public void showMeProxyTest()
+  {
+    final Set<String> methodNamesCalled = new HashSet<>();
+    InvocationHandler invocationHandler = new InvocationHandler()
+    {
+      @Override
+      public Object invoke(Object o, Method method, Object[] args) throws Throwable
+      {
+        String methodName = method.getName();
+        System.out.println("METHOD_CALLED: " + methodName);
+        methodNamesCalled.add(methodName);
+
+        switch(methodName)
+        {
+          case "helloInt":
+            return 123;
+          case "equals":
+            return o == args[0];
+          case "hashCode":
+            return 0;
+          case "toString":
+            return "hello";
+          default:
+            return method.invoke(o, args);
+        }
+      }
+    };
+    ShowMe showMe = (ShowMe)Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] {ShowMe.class},
+            invocationHandler);
+    showMe.helloInt();
+    showMe.toString();
+    showMe.equals(new ShowMe()
+    {
+      @Override
+      public int helloInt()
+      {
+        return 423;
+      }
+    });
+    showMe.hashCode();
+
+    assertTrue("toString wasn't called", methodNamesCalled.contains("toString"));
+    assertEquals("Not all methods called", methodNamesCalled.size(), 4);
   }
 
   enum Roshambo {

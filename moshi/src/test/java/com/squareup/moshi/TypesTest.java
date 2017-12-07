@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import org.junit.Test;
 
+
 import co.touchlab.doppl.testing.DopplHacks;
 import co.touchlab.doppl.utils.PlatformUtils;
 
@@ -132,7 +133,11 @@ public final class TypesTest {
     assertThat(getFirstTypeArgument(type)).isEqualTo(B.class);
   }
 
+  @DopplHacks //JVM vs on-device hashcode methods differ. All actual comparisons should call
+  //com.squareup.moshi.Types.canonicalize() internally, so it should be ok
   @Test public void newParameterizedTypeObjectMethods() throws Exception {
+    if(PlatformUtils.isJ2objc())
+      return;
     Type mapOfStringIntegerType = TypesTest.class.getDeclaredField(
         "mapOfStringInteger").getGenericType();
     ParameterizedType newMapType = Types.newParameterizedType(Map.class, String.class, Integer.class);

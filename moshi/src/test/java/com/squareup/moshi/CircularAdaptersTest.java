@@ -19,10 +19,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.Set;
-
-import org.junit.Assert;
 import org.junit.Test;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -95,64 +92,6 @@ public final class CircularAdaptersTest {
       if (!name.startsWith(prefix)) throw new IllegalArgumentException();
       return new Node(name.substring(prefix.length()), left, right);
     }
-  }
-
-  @Left
-  static class HellNode {
-    final String asdf;
-
-    HellNode(String asdf)
-    {
-      this.asdf = asdf;
-    }
-  }
-
-  @Test public void cacheKeyEqualsTest()
-  {
-    Left implementation = Types.createJsonQualifierImplementation(Left.class);
-
-    Left realLeft = HellNode.class.getAnnotation(Left.class);
-//
-//    boolean real = realLeft.equals(proxyLeft);
-//    boolean proxy = proxyLeft.equals(realLeft);
-
-//    Assert.assertTrue(real);
-//    Assert.assertTrue(proxy);
-    implementation.equals(realLeft);
-    String aString = implementation.toString();
-    Class<? extends Annotation> annotationType = implementation.annotationType();
-    int hashCode = implementation.hashCode();
-    implementation.equals(implementation);
-
-    Object cacheKey = Moshi.cacheKey(HellNode.class,
-            Collections.singleton(implementation));
-
-    Set<? extends Annotation> annotations = Util.jsonAnnotations(HellNode.class);
-    Object cacheKey1 = Moshi.cacheKey(HellNode.class, annotations);
-
-    boolean equals = cacheKey.equals(cacheKey1);
-//    Assert.assertTrue(equals);
-    boolean otherEquals = cacheKey1.equals(cacheKey);
-
-  }
-
-  @Override
-  public boolean equals(Object o)
-  {
-    System.out.println("gogoequals");
-    return super.equals(o);
-  }
-
-  @Override
-  public int hashCode()
-  {
-    return super.hashCode();
-  }
-
-  @Override
-  public String toString()
-  {
-    return super.toString();
   }
 
   /**

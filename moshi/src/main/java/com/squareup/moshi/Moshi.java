@@ -142,7 +142,7 @@ public final class Moshi {
   }
 
   /** Returns an opaque object that's equal if the type and annotations are equal. */
-  protected static Object cacheKey(Type type, Set<? extends Annotation> annotations) {
+  private Object cacheKey(Type type, Set<? extends Annotation> annotations) {
     if (annotations.isEmpty()) return type;
     return Arrays.asList(type, annotations);
   }

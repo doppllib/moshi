@@ -180,45 +180,26 @@ public final class Types {
     if (annotationType.getDeclaredMethods().length != 0) {
       throw new IllegalArgumentException(annotationType + " must not declare methods.");
     }
-    InvocationHandler invocationHandler = new InvocationHandler()
-    {
-      @Override
-      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
-      {
-        String methodName = method.getName();
-        switch(methodName)
-        {
-          case "annotationType":
-            return annotationType;
-          case "equals":
-            Object o = args[0];
-            return annotationType.isInstance(o);
-          case "hashCode":
-            return 0;
-          case "toString":
-            return "@" + annotationType.getName() + "()";
-          default:
-            return method.invoke(proxy, args);
-        }
-      }
-    };
-    if(isJ2objc())
-    {
-      return (T) MoshiProxy.newProxyInstance(annotationType.getClassLoader(),
-              new Class<?>[] {annotationType},
-              invocationHandler);
-    }
-    else
-    {
-      return (T) Proxy.newProxyInstance(annotationType.getClassLoader(),
-              new Class<?>[] {annotationType},
-              invocationHandler);
-    }
-  }
-
-  public static boolean isJ2objc()
-  {
-    return System.getProperty("java.vendor").contains("J2ObjC");
+    return (T) Proxy.newProxyInstance(annotationType.getClassLoader(),
+        new Class<?>[] { annotationType }, new InvocationHandler() {
+          @Override public Object invoke(Object proxy, Method method, Object[] args)
+              throws Throwable {
+            String methodName = method.getName();
+            switch (methodName) {
+              case "annotationType":
+                return annotationType;
+              case "equals":
+                Object o = args[0];
+                return annotationType.isInstance(o);
+              case "hashCode":
+                return 0;
+              case "toString":
+                return "@" + annotationType.getName() + "()";
+              default:
+                return method.invoke(proxy, args);
+            }
+          }
+        });
   }
 
   static boolean equal(@Nullable Object a, @Nullable Object b) {

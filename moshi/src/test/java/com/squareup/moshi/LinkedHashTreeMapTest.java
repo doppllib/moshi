@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Random;
 import org.junit.Test;
 
+import co.touchlab.doppl.utils.PlatformUtils;
+
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
@@ -205,7 +208,7 @@ public final class LinkedHashTreeMapTest {
 
     Node<String, String>[] newTable = LinkedHashTreeMap.doubleCapacity(oldTable);
 
-    boolean j2objc = Types.isJ2objc();
+    boolean j2objc = PlatformUtils.isJ2objc();
 
     assertTree("(b d f)", newTable[j2objc ? 1 :0]); // Even hash codes!
     assertTree("(a c (. e g))", newTable[j2objc ? 0 : 1]); // Odd hash codes!
@@ -216,8 +219,8 @@ public final class LinkedHashTreeMapTest {
             Node<String, String>[] oldTable = new Node[1];
     oldTable[0] = node(node("b"), "d", node("f"));
 
-    int dataIndex = Types.isJ2objc() ? 1 : 0;
-    int nullIndex = Types.isJ2objc() ? 0 : 1;
+    int dataIndex = PlatformUtils.isJ2objc() ? 1 : 0;
+    int nullIndex = PlatformUtils.isJ2objc() ? 0 : 1;
 
     Node<String, String>[] newTable = LinkedHashTreeMap.doubleCapacity(oldTable);
     String asdfString = toString(newTable[dataIndex]);
