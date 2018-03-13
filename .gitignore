@@ -3,6 +3,9 @@
 .settings
 eclipsebin
 
+doppllib.podspec
+testdoppllib.podspec
+
 bin
 gen
 build
