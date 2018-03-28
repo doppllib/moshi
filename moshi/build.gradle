@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
-apply plugin: 'co.doppl.gradle'
+apply plugin: 'org.j2objcgradle.gradle'
 apply plugin: 'com.jfrog.bintray'
 
 
@@ -9,22 +9,22 @@ targetCompatibility = 1.7
 
 dependencies {
     testCompile "junit:junit:$doppl_junit_java"
-    testDoppl "co.doppl.junit:junit:$doppl_junit_doppl"
+    testJ2objc "org.j2objcgradle.junit:junit:$doppl_junit_doppl"
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
 
     testCompile "co.doppl.lib:androidbasetest:$project.ext.javaCoreVersion"
-    testDoppl "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
+    testJ2objc "co.doppl.lib:androidbasetest:$project.ext.dopplCoreVersion"
 
     compile "com.squareup.okio:okio:$doppl_okio_java"
-    doppl "co.doppl.com.squareup.okio:okio:$doppl_okio_doppl"
+    j2objc "co.doppl.com.squareup.okio:okio:$doppl_okio_doppl"
 
     testCompile "org.assertj:assertj-core:$doppl_assertj_core_java"
-    testDoppl "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
+    testJ2objc "co.doppl.org.assertj:assertj-core:$doppl_assertj_core_doppl"
 }
 
-apply from: "$dopplSharedScriptHome/doppllibpublish.gradle"
-apply from: "$dopplSharedScriptHome/bintray.gradle"
+apply from: "https://raw.githubusercontent.com/doppllib/gradlescripts/master/doppllibpublish.gradle"
+apply from: "https://raw.githubusercontent.com/doppllib/gradlescripts/master/bintray.gradle"
 
 tasks.withType(Test) {
     scanForTestClasses = false
@@ -35,7 +35,7 @@ test{
     enabled = false
 }
 
-dopplConfig {
+j2objcConfig {
     javaDebug true
     translatePattern {
         exclude '**/Pair.*'

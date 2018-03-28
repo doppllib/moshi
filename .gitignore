@@ -3,8 +3,7 @@
 .settings
 eclipsebin
 
-doppllib.podspec
-testdoppllib.podspec
+*.podspec
 
 bin
 gen
